@@ -8,8 +8,8 @@ import java.util.ArrayList;
 public class Minesweeper extends AbstractMineSweeper {
 
     private AbstractTile[][] field;
-
-
+    private boolean firstClick;
+    private boolean firstTileRule;
 
     @Override
     public int getWidth()
@@ -49,6 +49,8 @@ public class Minesweeper extends AbstractMineSweeper {
     @Override
     public void startNewGame(int row, int col, int explosionCount)
     {
+        firstTileRule = true;
+        firstClick = true;
         field = new AbstractTile[row][col];
         for(int x = 0; x < row; x++)
         {
@@ -110,13 +112,11 @@ public class Minesweeper extends AbstractMineSweeper {
     }
 
     @Override
-    public void open(int x, int y)
-    {
-        if(x < getWidth() && x>=0 && y < getHeight() && y>=0)
-        {
-            field[x][y].open();
+    public void open(int x, int y) {
+        if (x < getWidth() && x >= 0 && y < getHeight() && y >= 0) {
+                field[x][y].open();
+            }
         }
-    }
 
     @Override
     public void flag(int x, int y) {
@@ -130,7 +130,7 @@ public class Minesweeper extends AbstractMineSweeper {
 
     @Override
     public void deactivateFirstTileRule() {
-
+        firstTileRule = false;
     }
 
     @Override
