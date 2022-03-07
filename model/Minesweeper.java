@@ -96,7 +96,11 @@ public class Minesweeper extends AbstractMineSweeper {
     @Override
     public AbstractTile getTile(int x, int y)
     {
-        return field[x][y];
+        if(x < getWidth() && x>=0 && y < getHeight() && y>=0)
+        {
+            return field[x][y];
+        }
+        return null;
     }
 
     @Override
@@ -106,8 +110,12 @@ public class Minesweeper extends AbstractMineSweeper {
     }
 
     @Override
-    public void open(int x, int y) {
-        field[x][y].open();
+    public void open(int x, int y)
+    {
+        if(x < getWidth() && x>=0 && y < getHeight() && y>=0)
+        {
+            field[x][y].open();
+        }
     }
 
     @Override
@@ -133,10 +141,13 @@ public class Minesweeper extends AbstractMineSweeper {
 
     @Override
     public AbstractTile generateExplosiveTile() {
-        return null;
+        Tile tile = new Tile();
+        tile.isExplosive();
+        return tile;
     }
 
 
+    /*
     public int returnAmountFlagged()
     {
         int teller = 0;
@@ -152,4 +163,5 @@ public class Minesweeper extends AbstractMineSweeper {
         }
         return teller;
     }
+    */
 }
