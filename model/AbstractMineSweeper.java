@@ -8,4 +8,5 @@ public abstract class AbstractMineSweeper implements TestableMinesweeper {
     public final void setGameStateNotifier(IGameStateNotifier notifier){
         this.viewNotifier = notifier;
     }
+
 }
