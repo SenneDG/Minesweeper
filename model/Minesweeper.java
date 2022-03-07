@@ -1,6 +1,9 @@
 package model;
 import model.AbstractTile;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Minesweeper extends AbstractMineSweeper {
 
     private AbstractTile[][] field;
@@ -22,7 +25,24 @@ public class Minesweeper extends AbstractMineSweeper {
     @Override
     public void startNewGame(Difficulty level)
     {
-
+        if(level == Difficulty.EASY){
+            int row = 8;
+            int col = 8;
+            int explosionCount = 10;
+            startNewGame(row, col, explosionCount);
+        }
+        else if(level == Difficulty.MEDIUM){
+            int row = 16;
+            int col = 16;
+            int explosionCount = 40;
+            startNewGame(row, col, explosionCount);
+        }
+        else if(level == Difficulty.HARD){
+            int row = 16;
+            int col = 30;
+            int explosionCount = 99;
+            startNewGame(row, col, explosionCount);
+        }
     }
 
     @Override

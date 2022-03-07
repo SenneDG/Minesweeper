@@ -176,6 +176,7 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.setVisible(true);
         this.world.repaint();
     }
+
     @Override
     public void notifyGameLost() {
         this.removeAllTileEvents();
