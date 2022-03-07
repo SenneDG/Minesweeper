@@ -1,5 +1,6 @@
 package model;
 import model.AbstractTile;
+import java.util.Random;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -49,6 +50,34 @@ public class Minesweeper extends AbstractMineSweeper {
     public void startNewGame(int row, int col, int explosionCount)
     {
         field = new AbstractTile[row][col];
+        for(int x = 0; x < row; x++)
+        {
+            for(int y = 0; y < col; y++)
+            {
+                field[x][y] = new Tile();
+            }
+        }
+        int teller = 0;
+        int rand_x = 0;
+        int rand_y = 0;
+        Random random = new Random();
+        while(teller < explosionCount)
+        {
+            for(int x = 0; x < row; x++)
+            {
+                rand_x = random.nextInt(row);
+                for(int y = 0; y < col; y++)
+                {
+                    rand_y = random.nextInt(col);
+                }
+            }
+            if(field[rand_x][rand_y].isFlagged() != true)
+            {
+                field[rand_x][rand_y].flag();
+                teller++;
+            }
+        }
+
     }
 
     @Override
@@ -105,5 +134,22 @@ public class Minesweeper extends AbstractMineSweeper {
     @Override
     public AbstractTile generateExplosiveTile() {
         return null;
+    }
+
+
+    public int returnAmountFlagged()
+    {
+        int teller = 0;
+        for(int x = 0; x < getWidth(); x++)
+        {
+            for(int y = 0; y < getHeight(); y++)
+            {
+                if(field[x][y].isFlagged())
+                {
+                    teller++;
+                }
+            }
+        }
+        return teller;
     }
 }
