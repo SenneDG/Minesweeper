@@ -1,56 +1,74 @@
 package model;
+import model.AbstractTile;
 
 public class Minesweeper extends AbstractMineSweeper {
 
+    private AbstractTile[][] field;
+
+
 
     @Override
-    public int getWidth() {
-        return 0;
+    public int getWidth()
+    {
+        return field.length;
     }
 
     @Override
-    public int getHeight() {
-        return 0;
+    public int getHeight()
+    {
+        return field[0].length;
     }
 
     @Override
-    public void startNewGame(Difficulty level) {
-
-    }
-
-    @Override
-    public void startNewGame(int row, int col, int explosionCount) {
-
-    }
-
-    @Override
-    public void toggleFlag(int x, int y) {
+    public void startNewGame(Difficulty level)
+    {
 
     }
 
     @Override
-    public AbstractTile getTile(int x, int y) {
-        return null;
+    public void startNewGame(int row, int col, int explosionCount)
+    {
+        field = new AbstractTile[row][col];
     }
 
     @Override
-    public void setWorld(AbstractTile[][] world) {
+    public void toggleFlag(int x, int y)
+    {
+        if(field[x][y].isFlagged())
+        {
+            field[x][y].unflag();
+        }
+        else
+        {
+            field[x][y].flag();
+        }
+    }
 
+    @Override
+    public AbstractTile getTile(int x, int y)
+    {
+        return field[x][y];
+    }
+
+    @Override
+    public void setWorld(AbstractTile[][] world)
+    {
+        field = world;
     }
 
     @Override
     public void open(int x, int y) {
-
+        field[x][y].open();
     }
 
     @Override
     public void flag(int x, int y) {
-
+        field[x][y].flag();
     }
 
     @Override
     public void unflag(int x, int y) {
-
+        field[x][y].unflag();
     }
 
     @Override
@@ -60,7 +78,8 @@ public class Minesweeper extends AbstractMineSweeper {
 
     @Override
     public AbstractTile generateEmptyTile() {
-        return null;
+        Tile tile = new Tile();
+        return tile;
     }
 
     @Override
@@ -68,4 +87,3 @@ public class Minesweeper extends AbstractMineSweeper {
         return null;
     }
 }
-
