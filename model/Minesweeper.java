@@ -73,7 +73,7 @@ public class Minesweeper extends AbstractMineSweeper {
             rand_y = random.nextInt(col);
             if(field[rand_x][rand_y].isExplosive() != true)
             {
-                field[rand_x][rand_y].setExplosive();
+                field[rand_x][rand_y] = generateExplosiveTile();
                 teller++;
             }
         }
@@ -157,7 +157,7 @@ public class Minesweeper extends AbstractMineSweeper {
     @Override
     public AbstractTile generateExplosiveTile() {
         Tile tile = new Tile();
-        tile.isExplosive();
+        tile.setExplosive();
         return tile;
     }
 
