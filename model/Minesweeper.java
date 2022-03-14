@@ -11,16 +11,21 @@ public class Minesweeper extends AbstractMineSweeper {
     private boolean firstClick;
     private boolean firstTileRule;
 
+    public Minesweeper()
+    {
+        firstTileRule = true;
+    }
+
     @Override
     public int getWidth()
     {
-        return field.length;
+        return field[0].length;
     }
 
     @Override
     public int getHeight()
     {
-        return field[0].length;
+        return field.length;
     }
 
     @Override
@@ -49,33 +54,26 @@ public class Minesweeper extends AbstractMineSweeper {
     @Override
     public void startNewGame(int row, int col, int explosionCount)
     {
-        firstTileRule = true;
         firstClick = true;
         field = new AbstractTile[row][col];
         for(int x = 0; x < row; x++)
         {
             for(int y = 0; y < col; y++)
             {
-                field[x][y] = new Tile();
+                field[x][y] = generateEmptyTile();
             }
         }
         int teller = 0;
-        int rand_x = 0;
-        int rand_y = 0;
+        int rand_x;
+        int rand_y;
         Random random = new Random();
         while(teller < explosionCount)
         {
-            for(int x = 0; x < row; x++)
+            rand_x = random.nextInt(row);
+            rand_y = random.nextInt(col);
+            if(field[rand_x][rand_y].isExplosive() != true)
             {
-                rand_x = random.nextInt(row);
-                for(int y = 0; y < col; y++)
-                {
-                    rand_y = random.nextInt(col);
-                }
-            }
-            if(field[rand_x][rand_y].isFlagged() != true)
-            {
-                field[rand_x][rand_y].flag();
+                field[rand_x][rand_y].setExplosive();
                 teller++;
             }
         }
@@ -98,11 +96,11 @@ public class Minesweeper extends AbstractMineSweeper {
     @Override
     public AbstractTile getTile(int x, int y)
     {
-        if(x < getWidth() && x>=0 && y < getHeight() && y>=0)
+        if(x < getHeight() && x>=0 && y < getWidth() && y>=0)
         {
             return field[x][y];
         }
-        return null;
+        return generateEmptyTile();
     }
 
     @Override
@@ -112,11 +110,28 @@ public class Minesweeper extends AbstractMineSweeper {
     }
 
     @Override
-    public void open(int x, int y) {
-        if (x < getWidth() && x >= 0 && y < getHeight() && y >= 0) {
-                field[x][y].open();
+    public void open(int x, int y)
+    {
+        if (x < getHeight() && x >= 0 && y < getWidth() && y >= 0)
+        {
+            if (firstClick)
+            {
+                if (field[x][y].isFlagged())
+                {
+                    firstClick = false;
+                    field[x][y].unflag();
+                    Random random = new Random();
+                    while (field[x][y].isFlagged())
+                    {
+                        x = random.nextInt(getWidth());
+                        y = random.nextInt(getHeight());
+                    }
+
+                }
             }
+            field[x][y].open();
         }
+    }
 
     @Override
     public void flag(int x, int y) {

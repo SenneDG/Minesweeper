@@ -92,7 +92,7 @@ public class GameModelTester {
 
         for (int i=0; i<h; ++i)
             for (int j=0; j<w; ++j) {
-                TestableTile temp = gameModel.getTile(j, i);
+                TestableTile temp = gameModel.getTile(i, j);
                 explosionCount += (temp.isExplosive())? 1 : 0;
             }  
         assertEquals(explosionCount, totalExplosion);
