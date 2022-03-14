@@ -46,4 +46,5 @@ public class Tile extends AbstractTile{
     public boolean isOpened() {
         return isOpened;
     }
+
 }

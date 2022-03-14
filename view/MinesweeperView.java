@@ -1,6 +1,7 @@
 package view;
 
 import model.Difficulty;
+import model.Minesweeper;
 import model.PlayableMinesweeper;
 
 import javax.imageio.ImageIO;
@@ -31,6 +32,7 @@ import notifier.IGameStateNotifier;
 public class MinesweeperView implements IGameStateNotifier {
     public static final int MAX_TIME = 1;//in minutes
     public static final int TILE_SIZE = 50;
+
     public static final class AssetPath {
         public static final String CLOCK_ICON = "./assets/icons/clock.png";
         public static final String FLAG_ICON = "./assets/icons/flag.png";
@@ -47,8 +49,11 @@ public class MinesweeperView implements IGameStateNotifier {
     private JPanel flagPanel = new JPanel();
     private JLabel timerView = new JLabel();
     private JLabel flagCountView = new JLabel();
+    private Minesweeper minesweeper;
 
     public MinesweeperView() {
+        minesweeper = new Minesweeper();
+        minesweeper.startNewGame(Difficulty.MEDIUM);
         this.window = new JFrame("Minesweeper");
         timerPanel.setLayout(new FlowLayout());
         this.menuBar = new JMenuBar();
@@ -137,7 +142,6 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.setVisible(true);
     }
 
-
     public MinesweeperView(PlayableMinesweeper gameModel) {
         this();
         this.setGameModel(gameModel);
@@ -164,14 +168,15 @@ public class MinesweeperView implements IGameStateNotifier {
                         if (arg0.getButton() == MouseEvent.BUTTON1){
                             if (gameModel!=null)
                                 gameModel.open(temp.getPositionX(), temp.getPositionY());
-                                notifyOpened(temp.getPositionX(), temp.getPositionY(), 1);
-                                System.out.println(temp.getPositionX() + "," + temp.getPositionY());
+                                System.out.println(temp.getPositionX()+ " " + temp.getPositionY());
+                                int b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY());
+                                notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
                         }
                         else if (arg0.getButton() == MouseEvent.BUTTON3) {
                             if (gameModel!=null)
                                 gameModel.toggleFlag(temp.getPositionX(), temp.getPositionY());
                                 notifyFlagged(temp.getPositionX(), temp.getPositionY());
-                        }
+                        } 
                     }
                 });
                 this.tiles[i][j] = temp;
@@ -183,7 +188,6 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.setVisible(true);
         this.world.repaint();
     }
-
 
     @Override
     public void notifyGameLost() {
@@ -232,6 +236,11 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyExploded(int x, int y) {
         this.tiles[y][x].notifyExplode();
+    }
+
+    @Override
+    public Minesweeper returnMinesweeper() {
+        return minesweeper;
     }
 
 }

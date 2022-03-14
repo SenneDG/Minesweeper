@@ -528,6 +528,12 @@ public class GameModelTester {
             assertTrue("This method shouldn't be invoked in this test", false);       
         }
 
+        @Override
+        public Minesweeper returnMinesweeper() {
+            Minesweeper ms = new Minesweeper();
+            return ms;
+        }
+
         public int getInvokedMethodCount() {return invoked;}
         protected void setInvoked() {invoked++;}
 

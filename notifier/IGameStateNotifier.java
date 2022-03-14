@@ -1,5 +1,7 @@
 package notifier;
 
+import model.Minesweeper;
+
 import java.time.Duration;
 
 public interface IGameStateNotifier {
@@ -12,4 +14,5 @@ public interface IGameStateNotifier {
     void notifyFlagged(int x, int y);
     void notifyUnflagged(int x, int y);
     void notifyExploded(int x, int y);
+    Minesweeper returnMinesweeper();
 }

@@ -53,5 +53,4 @@ public class TileView extends JButton implements ITileStateNotifier {
     public String toString(){
         return "["+Integer.toString(x)+","+Integer.toString(y)+"]";
     }
-    
 }
