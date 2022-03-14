@@ -14,7 +14,7 @@ public class Tile extends AbstractTile{
     @Override
     public boolean open() {
         isOpened = true;
-        return flagged;
+        return isOpened;
     }
 
     @Override

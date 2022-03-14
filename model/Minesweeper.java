@@ -116,12 +116,11 @@ public class Minesweeper extends AbstractMineSweeper {
         {
             if (firstClick)
             {
-                if (field[x][y].isFlagged())
+                if (field[x][y].isExplosive())
                 {
                     firstClick = false;
-                    field[x][y].unflag();
                     Random random = new Random();
-                    while (field[x][y].isFlagged())
+                    while (field[x][y].isExplosive())
                     {
                         x = random.nextInt(getWidth());
                         y = random.nextInt(getHeight());

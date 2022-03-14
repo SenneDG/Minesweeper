@@ -134,6 +134,7 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.setVisible(true);
     }
 
+
     public MinesweeperView(PlayableMinesweeper gameModel) {
         this();
         this.setGameModel(gameModel);
@@ -160,11 +161,13 @@ public class MinesweeperView implements IGameStateNotifier {
                         if (arg0.getButton() == MouseEvent.BUTTON1){
                             if (gameModel!=null)
                                 gameModel.open(temp.getPositionX(), temp.getPositionY());
-                        } 
+                                notifyOpened(temp.getPositionX(), temp.getPositionY(), 1);
+                                System.out.println(temp.getPositionX() + "," + temp.getPositionY());
+                        }
                         else if (arg0.getButton() == MouseEvent.BUTTON3) {
                             if (gameModel!=null)
                                 gameModel.toggleFlag(temp.getPositionX(), temp.getPositionY());
-                        } 
+                        }
                     }
                 });
                 this.tiles[i][j] = temp;
@@ -176,6 +179,7 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.setVisible(true);
         this.world.repaint();
     }
+
 
     @Override
     public void notifyGameLost() {
