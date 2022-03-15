@@ -1,16 +1,15 @@
 package model;
 import model.AbstractTile;
 import java.util.Random;
-
 import java.lang.reflect.Array;
-import java.util.ArrayList;
+
 
 public class Minesweeper extends AbstractMineSweeper {
 
     private AbstractTile[][] field;
     private boolean firstClick;
     private boolean firstTileRule;
-    public int explosionCount;
+    private int explosionCount;
     public Minesweeper()
     {
         firstTileRule = true;
