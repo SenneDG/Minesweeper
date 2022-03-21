@@ -26,6 +26,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.util.concurrent.TimeUnit;
 
 
 import notifier.IGameStateNotifier;
@@ -55,6 +56,7 @@ public class MinesweeperView implements IGameStateNotifier {
     private int correctAmount = 0;
     private boolean firstTileRule = false;
     private Difficulty difficulty = Difficulty.EASY;
+    private int timeElapsed = 0;
 
 
     public MinesweeperView() {
@@ -95,7 +97,7 @@ public class MinesweeperView implements IGameStateNotifier {
             JLabel clockIcon = new JLabel(new ImageIcon(ImageIO.read(new File(AssetPath.CLOCK_ICON))));
             clockIcon.setSize(new DimensionUIResource(1, 1));
             timerPanel.add(clockIcon);
-            timerPanel.add(new JLabel("TIME ELAPSED: "));
+            //timerPanel.add(new JLabel("TIME ELAPSED: " + timeElapsed));
             timerPanel.add(this.timerView);
         } catch (IOException e) {
             System.out.println("Unable to locate clock resource");
@@ -157,6 +159,58 @@ public class MinesweeperView implements IGameStateNotifier {
     public void setGameModel(PlayableMinesweeper newGameModel) {
         this.gameModel = newGameModel;
         this.gameModel.setGameStateNotifier(this);
+    }
+
+    public void timer() throws InterruptedException
+    {
+        boolean x=true;
+        boolean minutes = false;
+        long displayMinutes=0;
+        long starttime=System.currentTimeMillis();
+        while(x)
+        {
+            TimeUnit.SECONDS.sleep(1);
+            long timepassed=System.currentTimeMillis()-starttime;
+            long secondspassed=timepassed/1000;
+            if(secondspassed==60)
+            {
+                secondspassed=0;
+                minutes = true;
+                starttime=System.currentTimeMillis();
+            }
+            if((secondspassed%60)==0)
+                displayMinutes++;
+
+            if(minutes)
+            {
+                if (secondspassed == 1)
+                {
+                    if(displayMinutes == 1)
+                    {
+                        timerView.setText("TIME ELAPSED: " + displayMinutes + " minute and " + secondspassed + " second");
+                    }
+                    else
+                    {
+                        timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " second");
+                    }
+                }
+                else
+                {
+                    timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " seconds");
+                }
+            }
+            else
+            {
+                if(secondspassed == 1)
+                {
+                    timerView.setText("TIME ELAPSED: " + secondspassed + " second");
+                }
+                else
+                {
+                    timerView.setText("TIME ELAPSED: " + secondspassed + " seconds");
+                }
+            }
+        }
     }
 
     @Override

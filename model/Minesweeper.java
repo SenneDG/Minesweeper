@@ -1,23 +1,19 @@
 package model;
 import model.AbstractTile;
 import java.util.Random;
-import java.lang.reflect.Array;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class Minesweeper extends AbstractMineSweeper {
 
     private AbstractTile[][] field;
     private boolean firstClick;
     private boolean firstTileRule;
-    private int explosionCount;
+
     public Minesweeper()
     {
         firstTileRule = true;
-    }
-
-
-    public int getExplosionCount(){
-        return explosionCount;
     }
 
     @Override
@@ -39,21 +35,18 @@ public class Minesweeper extends AbstractMineSweeper {
             int row = 8;
             int col = 8;
             int explosionCount = 10;
-            this.explosionCount = explosionCount;
             startNewGame(row, col, explosionCount);
         }
         else if(level == Difficulty.MEDIUM){
             int row = 16;
             int col = 16;
             int explosionCount = 40;
-            this.explosionCount = explosionCount;
             startNewGame(row, col, explosionCount);
         }
         else if(level == Difficulty.HARD){
             int row = 16;
             int col = 30;
             int explosionCount = 99;
-            this.explosionCount = explosionCount;
             startNewGame(row, col, explosionCount);
         }
     }
@@ -172,175 +165,55 @@ public class Minesweeper extends AbstractMineSweeper {
         return tile;
     }
 
-    public int getAmountExplosive(int x, int y) {
+    public int getAmountExplosive(int x, int y)
+    {
         int teller = 0;
-        if (x == 0 && y == 0) {
-            if (field[x + 1][y].isExplosive()) {
-                teller++;
+        if(field[x][y].isExplosive() != true)
+        {
+            if (x > 0)
+            {
+                if(field[x+1][y].isExplosive())
+                {
+                    teller = teller + 1;
+                }
             }
-            if (field[x][y + 1].isExplosive()) {
-                teller++;
+            if(x<getHeight() - 1)
+            {
+                if(field[x-1][y].isExplosive())
+                {
+                    teller = teller + 1;
+                }
             }
-            if (field[x + 1][y + 1].isExplosive()) {
-                teller++;
+            if(y>0)
+            {
+                if(field[x][y+1].isExplosive())
+                {
+                    teller = teller + 1;
+                }
             }
-        }
-        if (x == 0 && y != 0 && y != getHeight()-1) {
-            if (field[x][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y].isExplosive()) {
-                teller++;
-            }
-            if (field[x][y + 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y + 1].isExplosive()) {
-                teller++;
-            }
-        }
-        if (x != 0 && y == 0 && x != getWidth()-1) {
-            if (field[x - 1][y].isExplosive()) {
-                teller++;
-            }
-            if (field[x - 1][y + 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x][y + 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y + 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y].isExplosive()) {
-                teller++;
+            if(y<getWidth() - 1)
+            {
+                if(field[x][y-1].isExplosive())
+                {
+                    teller = teller + 1;
+                }
             }
         }
-        if (x != 0 && y != 0 && x != getWidth()-1 && y != getHeight()-1) {
-            if (field[x - 1][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y].isExplosive()) {
-                teller++;
-            }
-            if (field[x - 1][y].isExplosive()) {
-                teller++;
-            }
-            if (field[x - 1][y + 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x][y + 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y + 1].isExplosive()) {
-                teller++;
-            }
-        }
-        if(x==getWidth()-1 && y==0){
-            if (field[x - 1][y].isExplosive()) {
-                teller++;
-            }
-            if (field[x-1][y + 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x][y + 1].isExplosive()) {
-                teller++;
-            }
-        }
-        if(x==getWidth()-1 && y!=0 && y!=getHeight()-1){
-            if (field[x][y-1].isExplosive()) {
-                teller++;
-            }
-            if (field[x - 1][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x-1][y].isExplosive()) {
-                teller++;
-            }
-            if (field[x - 1][y + 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x][y+1].isExplosive()) {
-                teller++;
-            }
-        }
-        if(x==getWidth()-1 && y==getHeight()-1){
-            if (field[x][y -1].isExplosive()) {
-                teller++;
-            }
-            if (field[x-1][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x-1][y].isExplosive()) {
-                teller++;
-            }
-        }
-        if(x!=0 && y==getHeight()-1 && x!=getWidth()-1){
-            if (field[x-1][y].isExplosive()) {
-                teller++;
-            }
-            if (field[x - 1][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x][y-1].isExplosive()) {
-                teller++;
-            }
-            if (field[x + 1][y - 1].isExplosive()) {
-                teller++;
-            }
-            if (field[x+1][y].isExplosive()) {
-                teller++;
+        return teller;
+    }
+
+    public int getExplosionCount() {
+        int teller = 0;
+        for(int x = 0; x < getHeight(); x++)
+        {
+            for(int y = 0; y<getWidth(); y++)
+            {
+                if(field[x][y].isExplosive())
+                {
+                    teller++;
+                }
             }
         }
         return teller;
     }
 }
-
-
-
-
-
-
-//        if(field[x][y].isExplosive() != true)
-//        {
-//            if (x > 0)
-//            {
-//                if(field[x-1][y].isExplosive())
-//                {
-//                    teller++;
-//                }
-//            }
-//            if(x<getHeight() - 1)
-//            {
-//                if(field[x-1][y].isExplosive())
-//                {
-//                    teller++;
-//                }
-//            }
-//            if(y>0)
-//            {
-//                if(field[x][y+1].isExplosive())
-//                {
-//                    teller++;
-//                }
-//            }
-//            if(y<getWidth() - 1)
-//            {
-//                if(field[x][y-1].isExplosive())
-//                {
-//                    teller++;
-//                }
-//            }
-//        }
-//        return teller;
-//    }
-//}

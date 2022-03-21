@@ -19,7 +19,7 @@ public class App {
         model.startNewGame(Difficulty.EASY);
         int h = model.getHeight();
         int w = model.getWidth();
-
         mine.notifyNewGame(h, w);
+        mine.timer();
     }
 }
