@@ -5,15 +5,7 @@ import model.Minesweeper;
 import model.PlayableMinesweeper;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.plaf.DimensionUIResource;
 
 import java.awt.event.MouseAdapter;
@@ -56,7 +48,10 @@ public class MinesweeperView implements IGameStateNotifier {
     private int correctAmount = 0;
     private boolean firstTileRule = false;
     private Difficulty difficulty = Difficulty.EASY;
-    private int timeElapsed = 0;
+    private boolean timer = true;
+    long displayMinutes=0;
+    long secondspassed = 0;
+    long starttime=System.currentTimeMillis();
 
 
     public MinesweeperView() {
@@ -163,11 +158,8 @@ public class MinesweeperView implements IGameStateNotifier {
 
     public void timer() throws InterruptedException
     {
-        boolean x=true;
         boolean minutes = false;
-        long displayMinutes=0;
-        long starttime=System.currentTimeMillis();
-        while(x)
+        while(timer)
         {
             TimeUnit.SECONDS.sleep(1);
             long timepassed=System.currentTimeMillis()-starttime;
@@ -211,6 +203,7 @@ public class MinesweeperView implements IGameStateNotifier {
                 }
             }
         }
+        timer();
     }
 
     @Override
@@ -218,6 +211,10 @@ public class MinesweeperView implements IGameStateNotifier {
         this.flagCountView.setText("0");
         this.window.setSize(col * TILE_SIZE, row * TILE_SIZE + 30);
         this.world.removeAll();
+        timer = true;
+        secondspassed = 0;
+        displayMinutes = 0;
+
 
         this.tiles = new TileView[row][col];
         for (int i=0; i<row; ++i) {
@@ -289,12 +286,16 @@ public class MinesweeperView implements IGameStateNotifier {
     public void notifyGameLost() {
         this.removeAllTileEvents();
         System.out.println("You lost");
+        timer = false;
+        JOptionPane.showMessageDialog(null, "You lost!");
         //throw new UnsupportedOperationException();
     }
     @Override
     public void notifyGameWon() {
         this.removeAllTileEvents();
         System.out.println("You won!");
+        JOptionPane.showMessageDialog(null, "You won!");
+        timer = false;
         //throw new UnsupportedOperationException();
     }
 
@@ -339,6 +340,13 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public Minesweeper returnMinesweeper() {
         return minesweeper;
+    }
+
+    public void resetTimer() {
+        secondspassed = 0;
+        displayMinutes = 0;
+        timer = true;
+
     }
 
 }
