@@ -20,6 +20,6 @@ public class App {
         int h = model.getHeight();
         int w = model.getWidth();
 
-        mine.notifyNewGame(w, h);
+        mine.notifyNewGame(h, w);
     }
 }

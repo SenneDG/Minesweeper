@@ -176,7 +176,7 @@ public class MinesweeperView implements IGameStateNotifier {
                             if (gameModel!=null)
                                 gameModel.open(temp.getPositionX(), temp.getPositionY());
                                 System.out.println("coordinate: "+"("+ temp.getPositionX()+ "," + temp.getPositionY() + ")");
-                                //de eerste click mag geen bom zijn (werkt nog niet zeker)
+                                //de eerste click mag geen bom zijn -> werkt niet
                                 if(!firstTileRule && minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
                                     minesweeper.startNewGame(difficulty);
                                     firstTileRule = true;
@@ -190,7 +190,6 @@ public class MinesweeperView implements IGameStateNotifier {
                                 else{
                                         int b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY());
                                         notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
-
                                 }
                         }
                         else if (arg0.getButton() == MouseEvent.BUTTON3) {
