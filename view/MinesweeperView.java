@@ -28,9 +28,9 @@ public class MinesweeperView implements IGameStateNotifier {
     public static final int TILE_SIZE = 50;
 
     public static final class AssetPath {
-        public static final String CLOCK_ICON = "./assets/icons/clock.jpg";
-        public static final String FLAG_ICON = "./assets/icons/flag.jpg";
-        public static final String BOMB_ICON = "./assets/icons/bomb.jpg";
+        public static final String CLOCK_ICON = "./assets/icons/clock.png";
+        public static final String FLAG_ICON = "./assets/icons/flag.png";
+        public static final String BOMB_ICON = "./assets/icons/bomb.png";
     }
     private PlayableMinesweeper gameModel;
     private JFrame window;
@@ -47,7 +47,7 @@ public class MinesweeperView implements IGameStateNotifier {
     private int flagAmount = 0;
     private int correctAmount = 0;
     private boolean firstTileRule = false;
-    private Difficulty difficulty = Difficulty.EASY;
+    private Difficulty difficulty = Difficulty.MEDIUM;
     private boolean timer = true;
     long displayMinutes=0;
     long secondspassed = 0;
@@ -83,7 +83,7 @@ public class MinesweeperView implements IGameStateNotifier {
         this.hardGame.addActionListener((ActionEvent e) -> {
             if (gameModel != null)
                 gameModel.startNewGame(Difficulty.HARD);
-                notifyNewGame(16,30);
+                notifyNewGame(24,24);
         });
         
         this.window.setJMenuBar(this.menuBar);
@@ -227,11 +227,7 @@ public class MinesweeperView implements IGameStateNotifier {
                             if (gameModel!=null)
                                 gameModel.open(temp.getPositionX(), temp.getPositionY());
                                 System.out.println("coordinate: "+"("+ temp.getPositionX()+ "," + temp.getPositionY() + ")");
-                                //de eerste click mag geen bom zijn -> werkt niet
-                                if(!firstTileRule && minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
-                                    minesweeper.startNewGame(difficulty);
-                                    firstTileRule = true;
-                                }
+
                                 //als de click een bom is stopt de game -> verloren
                                 if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
                                     notifyExploded(temp.getPositionX(), temp.getPositionY());
@@ -260,7 +256,7 @@ public class MinesweeperView implements IGameStateNotifier {
                                         }
                                     }
                                 }
-                                //wanneer een vak een flag heeft gaat de flag terug weg
+                                //toggle
                                 else if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isFlagged()){
                                     notifyUnflagged(temp.getPositionX(), temp.getPositionY());
                                     minesweeper.unflag(temp.getPositionX(), temp.getPositionY());
@@ -285,6 +281,14 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyGameLost() {
         this.removeAllTileEvents();
+        for (int i=0; i<this.tiles.length; ++i)
+            for (int j=0; j<this.tiles[i].length; ++j) {
+                int b = minesweeper.getAmountExplosive(i, j);
+                this.tiles[j][i].notifyOpened(b);
+                if(minesweeper.getTile(i,j).isExplosive()){
+                    this.tiles[j][i].notifyExplode();
+                }
+            }
         System.out.println("You lost");
         timer = false;
         JOptionPane.showMessageDialog(null, "You lost!");
@@ -293,6 +297,14 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyGameWon() {
         this.removeAllTileEvents();
+        for (int i=0; i<this.tiles.length; ++i)
+            for (int j=0; j<this.tiles[i].length; ++j) {
+                int b = minesweeper.getAmountExplosive(i, j);
+                this.tiles[j][i].notifyOpened(b);
+                if(minesweeper.getTile(i,j).isExplosive()){
+                    this.tiles[j][i].notifyExplode();
+                }
+            }
         System.out.println("You won!");
         JOptionPane.showMessageDialog(null, "You won!");
         timer = false;
@@ -301,7 +313,7 @@ public class MinesweeperView implements IGameStateNotifier {
 
     private void removeAllTileEvents() {
         for (int i=0; i<this.tiles.length; ++i)
-            for (int j=0; j<this.tiles[i].length; ++j) 
+            for (int j=0; j<this.tiles[i].length; ++j)
                 this.tiles[i][j].removalAllMouseListeners();
     }
 

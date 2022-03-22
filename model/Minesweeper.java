@@ -11,55 +11,46 @@ public class Minesweeper extends AbstractMineSweeper {
     private boolean firstClick;
     private boolean firstTileRule;
 
-    public Minesweeper()
-    {
+    public Minesweeper() {
         firstTileRule = true;
     }
 
     @Override
-    public int getWidth()
-    {
+    public int getWidth() {
         return field[0].length;
     }
 
     @Override
-    public int getHeight()
-    {
+    public int getHeight() {
         return field.length;
     }
 
     @Override
-    public void startNewGame(Difficulty level)
-    {
-        if(level == Difficulty.EASY){
+    public void startNewGame(Difficulty level) {
+        if (level == Difficulty.EASY) {
             int row = 8;
             int col = 8;
             int explosionCount = 10;
             startNewGame(row, col, explosionCount);
-        }
-        else if(level == Difficulty.MEDIUM){
+        } if (level == Difficulty.MEDIUM) {
             int row = 16;
             int col = 16;
             int explosionCount = 40;
             startNewGame(row, col, explosionCount);
-        }
-        else if(level == Difficulty.HARD){
-            int row = 16;
-            int col = 30;
+        } if (level == Difficulty.HARD) {
+            int row = 24;
+            int col = 24;
             int explosionCount = 99;
             startNewGame(row, col, explosionCount);
         }
     }
 
     @Override
-    public void startNewGame(int row, int col, int explosionCount)
-    {
+    public void startNewGame(int row, int col, int explosionCount) {
         firstClick = true;
         field = new AbstractTile[row][col];
-        for(int x = 0; x < row; x++)
-        {
-            for(int y = 0; y < col; y++)
-            {
+        for (int y = 0; y<row; y++) {
+            for (int x = 0; x < col; x++) {
                 field[x][y] = generateEmptyTile();
             }
         }
@@ -67,12 +58,10 @@ public class Minesweeper extends AbstractMineSweeper {
         int rand_x;
         int rand_y;
         Random random = new Random();
-        while(teller < explosionCount)
-        {
-            rand_x = random.nextInt(row);
-            rand_y = random.nextInt(col);
-            if(field[rand_x][rand_y].isExplosive() != true)
-            {
+        while (teller < explosionCount) {
+            rand_x = random.nextInt(row-1);
+            rand_y = random.nextInt(col-1);
+            if (!field[rand_x][rand_y].isExplosive()) {
                 field[rand_x][rand_y] = generateExplosiveTile();
                 teller++;
             }
@@ -81,14 +70,10 @@ public class Minesweeper extends AbstractMineSweeper {
     }
 
     @Override
-    public void toggleFlag(int x, int y)
-    {
-        if(field[x][y].isFlagged())
-        {
+    public void toggleFlag(int x, int y) {
+        if (field[x][y].isFlagged()) {
             field[x][y].unflag();
-        }
-        else
-        {
+        } else {
             field[x][y].flag();
         }
     }
@@ -99,38 +84,29 @@ public class Minesweeper extends AbstractMineSweeper {
     }
 
     @Override
-    public AbstractTile getTile(int x, int y)
-    {
-        if(x < getHeight() && x>=0 && y < getWidth() && y>=0)
-        {
+    public AbstractTile getTile(int x, int y) {
+        if (x < getHeight() && x >= 0 && y < getWidth() && y >= 0) {
             return field[x][y];
         }
         return generateEmptyTile();
     }
 
     @Override
-    public void setWorld(AbstractTile[][] world)
-    {
+    public void setWorld(AbstractTile[][] world) {
         field = world;
     }
 
     @Override
-    public void open(int x, int y)
-    {
-        if (x < getHeight() && x >= 0 && y < getWidth() && y >= 0)
-        {
-            if (firstClick)
-            {
-                if (field[x][y].isExplosive())
-                {
+    public void open(int x, int y) {
+        if (x < getWidth() && x >= 0 && y < getHeight() && y >= 0) {
+            if (firstClick) {
+                if (field[x][y].isExplosive()) {
                     firstClick = false;
                     Random random = new Random();
-                    while (field[x][y].isExplosive())
-                    {
+                    while (field[x][y].isExplosive()) {
                         x = random.nextInt(getWidth());
                         y = random.nextInt(getHeight());
                     }
-
                 }
             }
             field[x][y].open();
@@ -165,43 +141,174 @@ public class Minesweeper extends AbstractMineSweeper {
         return tile;
     }
 
-    public int getAmountExplosive(int x, int y)
-    {
+    public int getAmountExplosive(int x, int y) {
         int teller = 0;
-        if(field[x][y].isExplosive() != true)
-        {
-            if (x > 0)
-            {
-                if(field[x+1][y].isExplosive())
-                {
-                    teller = teller + 1;
+        if (x == 0) {
+            if(y == 0) {
+                if (field[x + 1][y].isExplosive()) {
+                    teller++;
                 }
-            }
-            if(x<getHeight() - 1)
-            {
-                if(field[x-1][y].isExplosive())
-                {
-                    teller = teller + 1;
+                if (field[x][y + 1].isExplosive()) {
+                    teller++;
                 }
-            }
-            if(y>0)
-            {
-                if(field[x][y+1].isExplosive())
-                {
-                    teller = teller + 1;
+                if (field[x + 1][y + 1].isExplosive()) {
+                    teller++;
                 }
+                return teller;
             }
-            if(y<getWidth() - 1)
-            {
-                if(field[x][y-1].isExplosive())
-                {
-                    teller = teller + 1;
+        }
+        if (x == 0) {
+            if(y != 0) {
+                if(y != getHeight()-1) {
+                    if (field[x][y - 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x + 1][y - 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x + 1][y].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x][y + 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x + 1][y + 1].isExplosive()) {
+                        teller++;
+                    }
+                    return teller;
                 }
             }
         }
+        if (x != 0) {
+            if(y == 0) {
+                if (x != getWidth()-1) {
+                    if (field[x - 1][y].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x - 1][y + 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x][y + 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x + 1][y + 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x + 1][y].isExplosive()) {
+                        teller++;
+                    }
+                    return teller;
+                }
+            }
+        }
+        if (x != 0) {
+            if(x != getWidth()-1){
+                if(y != 0){
+                  if(y != getHeight()-1) {
+                      if (field[x - 1][y - 1].isExplosive()) {
+                          teller++;
+                      }
+                      if (field[x][y - 1].isExplosive()) {
+                          teller++;
+                      }
+                      if (field[x + 1][y - 1].isExplosive()) {
+                          teller++;
+                      }
+                      if (field[x + 1][y].isExplosive()) {
+                          teller++;
+                      }
+                      if (field[x - 1][y].isExplosive()) {
+                          teller++;
+                      }
+                      if (field[x - 1][y + 1].isExplosive()) {
+                          teller++;
+                      }
+                      if (field[x][y + 1].isExplosive()) {
+                          teller++;
+                      }
+                      if (field[x + 1][y + 1].isExplosive()) {
+                          teller++;
+                      }
+                      return teller;
+                  }
+                }
+            }
+        }
+        if(x==getWidth()-1){
+            if(y==0) {
+                if (field[x - 1][y].isExplosive()) {
+                    teller++;
+                }
+                if (field[x - 1][y + 1].isExplosive()) {
+                    teller++;
+                }
+                if (field[x][y + 1].isExplosive()) {
+                    teller++;
+                }
+                return teller;
+            }
+        }
+        if(x==getWidth()-1){
+            if(y!=0) {
+                if (y != getHeight() - 1) {
+                    if (field[x][y - 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x - 1][y - 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x - 1][y].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x - 1][y + 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x][y + 1].isExplosive()) {
+                        teller++;
+                    }
+                    return teller;
+                }
+            }
+        }
+        if(x==getWidth()-1){
+            if (y==getHeight()-1) {
+                if (field[x][y - 1].isExplosive()) {
+                    teller++;
+                }
+                if (field[x - 1][y - 1].isExplosive()) {
+                    teller++;
+                }
+                if (field[x - 1][y].isExplosive()) {
+                    teller++;
+                }
+                return teller;
+            }
+        }
+        if(x!=0){
+            if(y==getHeight()-1) {
+                if (x != getWidth() - 1) {
+                    if (field[x - 1][y].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x - 1][y - 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x][y - 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x + 1][y - 1].isExplosive()) {
+                        teller++;
+                    }
+                    if (field[x + 1][y].isExplosive()) {
+                        teller++;
+                    }
+                    return teller;
+                }
+            }
+        }
+        System.out.println(teller);
         return teller;
     }
-
     public int getExplosionCount() {
         int teller = 0;
         for(int x = 0; x < getHeight(); x++)
