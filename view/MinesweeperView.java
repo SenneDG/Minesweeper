@@ -47,7 +47,7 @@ public class MinesweeperView implements IGameStateNotifier {
     private int flagAmount = 0;
     private int correctAmount = 0;
     private boolean firstTileRule = false;
-    private Difficulty difficulty = Difficulty.MEDIUM;
+    private Difficulty difficulty = Difficulty.EASY;
     private boolean timer = true;
     long displayMinutes=0;
     long secondspassed = 0;
@@ -173,32 +173,24 @@ public class MinesweeperView implements IGameStateNotifier {
             if((secondspassed%60)==0)
                 displayMinutes++;
 
-            if(minutes)
-            {
-                if (secondspassed == 1)
-                {
-                    if(displayMinutes == 1)
-                    {
+            if(minutes) {
+                if (secondspassed == 1) {
+                    if(displayMinutes == 1) {
                         timerView.setText("TIME ELAPSED: " + displayMinutes + " minute and " + secondspassed + " second");
                     }
-                    else
-                    {
+                    else {
                         timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " second");
                     }
                 }
-                else
-                {
+                else {
                     timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " seconds");
                 }
             }
-            else
-            {
-                if(secondspassed == 1)
-                {
+            else {
+                if(secondspassed == 1) {
                     timerView.setText("TIME ELAPSED: " + secondspassed + " second");
                 }
-                else
-                {
+                else {
                     timerView.setText("TIME ELAPSED: " + secondspassed + " seconds");
                 }
             }
@@ -236,7 +228,131 @@ public class MinesweeperView implements IGameStateNotifier {
                                 //als de click geen bom is komt er een getal met het aantal omliggende bommen
                                 else{
                                         int b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY());
-                                        notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
+                                        if(b == 0) {
+                                            notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
+                                            //omliggende vakjes ook laten openen wanneer er geen bommen in de buurt liggen
+                                            if(temp.getPositionX() == 0){
+                                                if(temp.getPositionY() == 0){
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY());
+                                                    notifyOpened(temp.getPositionX()+1, temp.getPositionY(), b);
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()+1);
+                                                    notifyOpened(temp.getPositionX(), temp.getPositionY()+1, b);
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY()+1);
+                                                    notifyOpened(temp.getPositionX()+1, temp.getPositionY()+1, b);
+                                                }
+                                            }
+                                            if(temp.getPositionX() == 0){
+                                                if (temp.getPositionY() != 0){
+                                                    if(temp.getPositionY() != minesweeper.getHeight()-1){
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()-1);
+                                                        notifyOpened(temp.getPositionX(), temp.getPositionY()-1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY()-1);
+                                                        notifyOpened(temp.getPositionX()+1, temp.getPositionY()-1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY());
+                                                        notifyOpened(temp.getPositionX()+1, temp.getPositionY(), b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()+1);
+                                                        notifyOpened(temp.getPositionX(), temp.getPositionY()+1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY()+1);
+                                                        notifyOpened(temp.getPositionX()+1, temp.getPositionY()+1, b);
+                                                    }
+                                                }
+                                            }
+                                            if(temp.getPositionX() != 0){
+                                                if(temp.getPositionY() == 0){
+                                                    if(temp.getPositionX() != minesweeper.getWidth()-1){
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY());
+                                                        notifyOpened(temp.getPositionX()-1, temp.getPositionY(), b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY());
+                                                        notifyOpened(temp.getPositionX()+1, temp.getPositionY(), b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY()+1);
+                                                        notifyOpened(temp.getPositionX()-1, temp.getPositionY()+1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()+1);
+                                                        notifyOpened(temp.getPositionX(), temp.getPositionY()+1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY()+1);
+                                                        notifyOpened(temp.getPositionX()+1, temp.getPositionY()+1, b);
+                                                    }
+                                                }
+                                            }
+                                            if(temp.getPositionX() != 0){
+                                                if(temp.getPositionX() != minesweeper.getWidth()-1){
+                                                    if(temp.getPositionY() != 0){
+                                                        if(temp.getPositionY() != minesweeper.getHeight()-1){
+                                                            b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY()-1);
+                                                            notifyOpened(temp.getPositionX()-1, temp.getPositionY()-1, b);
+                                                            b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()-1);
+                                                            notifyOpened(temp.getPositionX(), temp.getPositionY()-1, b);
+                                                            b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY()-1);
+                                                            notifyOpened(temp.getPositionX()+1, temp.getPositionY()-1, b);
+                                                            b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY());
+                                                            notifyOpened(temp.getPositionX()-1, temp.getPositionY(), b);
+                                                            b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY());
+                                                            notifyOpened(temp.getPositionX()+1, temp.getPositionY(), b);
+                                                            b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY()+1);
+                                                            notifyOpened(temp.getPositionX()-1, temp.getPositionY()+1, b);
+                                                            b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()+1);
+                                                            notifyOpened(temp.getPositionX(), temp.getPositionY()+1, b);
+                                                            b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY()+1);
+                                                            notifyOpened(temp.getPositionX()+1, temp.getPositionY()+1, b);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            if(temp.getPositionX() == minesweeper.getWidth()-1){
+                                                if(temp.getPositionY() == 0){
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY());
+                                                    notifyOpened(temp.getPositionX()-1, temp.getPositionY(), b);
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY()+1);
+                                                    notifyOpened(temp.getPositionX()-1, temp.getPositionY()+1, b);
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()+1);
+                                                    notifyOpened(temp.getPositionX(), temp.getPositionY()+1, b);
+                                                }
+                                            }
+                                            if(temp.getPositionX() == minesweeper.getWidth()-1){
+                                                if(temp.getPositionY() != 0){
+                                                    if(temp.getPositionY() != minesweeper.getHeight()-1){
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY()-1);
+                                                        notifyOpened(temp.getPositionX()-1, temp.getPositionY()-1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()-1);
+                                                        notifyOpened(temp.getPositionX(), temp.getPositionY()-1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY());
+                                                        notifyOpened(temp.getPositionX()-1, temp.getPositionY(), b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY()+1);
+                                                        notifyOpened(temp.getPositionX()-1, temp.getPositionY()+1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()+1);
+                                                        notifyOpened(temp.getPositionX(), temp.getPositionY()+1, b);
+                                                    }
+                                                }
+                                            }
+                                            if(temp.getPositionX() == minesweeper.getWidth()-1){
+                                                if(temp.getPositionY() == minesweeper.getHeight()-1){
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY()-1);
+                                                    notifyOpened(temp.getPositionX()-1, temp.getPositionY()-1, b);
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()-1);
+                                                    notifyOpened(temp.getPositionX(), temp.getPositionY()-1, b);
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY());
+                                                    notifyOpened(temp.getPositionX()-1, temp.getPositionY(), b);
+                                                }
+                                            }
+                                            if(temp.getPositionX() != 0){
+                                                if(temp.getPositionY() == minesweeper.getHeight()-1){
+                                                    if(temp.getPositionX() != minesweeper.getWidth()-1){
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY()-1);
+                                                        notifyOpened(temp.getPositionX()-1, temp.getPositionY()-1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()-1);
+                                                        notifyOpened(temp.getPositionX(), temp.getPositionY()-1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY()-1);
+                                                        notifyOpened(temp.getPositionX()+1, temp.getPositionY()-1, b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()-1, temp.getPositionY());
+                                                        notifyOpened(temp.getPositionX()-1, temp.getPositionY(), b);
+                                                        b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY());
+                                                        notifyOpened(temp.getPositionX()+1, temp.getPositionY(), b);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
+                                        }
                                 }
                         }
                         else if (arg0.getButton() == MouseEvent.BUTTON3) {
@@ -248,6 +364,7 @@ public class MinesweeperView implements IGameStateNotifier {
                                     minesweeper.flag(temp.getPositionX(), temp.getPositionY());
                                     flagAmount++;
                                     notifyFlagCountChanged(flagAmount);
+
                                     //als alle flags op de bommen liggen stopt de game -> gewonnen
                                     if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
                                         correctAmount++;
@@ -297,14 +414,17 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyGameWon() {
         this.removeAllTileEvents();
-        for (int i=0; i<this.tiles.length; ++i)
+        for (int i=0; i<this.tiles.length; ++i) {
             for (int j=0; j<this.tiles[i].length; ++j) {
-                int b = minesweeper.getAmountExplosive(i, j);
-                this.tiles[j][i].notifyOpened(b);
-                if(minesweeper.getTile(i,j).isExplosive()){
-                    this.tiles[j][i].notifyExplode();
+                if(!minesweeper.getTile(i,j).isExplosive()){
+                    int b = minesweeper.getAmountExplosive(i, j);
+                    this.tiles[j][i].notifyOpened(b);
+                }
+                if(minesweeper.getTile(i,j).isExplosive()) {
+                    this.tiles[j][i].notifyFlagged();
                 }
             }
+        }
         System.out.println("You won!");
         JOptionPane.showMessageDialog(null, "You won!");
         timer = false;

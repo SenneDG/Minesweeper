@@ -306,7 +306,6 @@ public class Minesweeper extends AbstractMineSweeper {
                 }
             }
         }
-        System.out.println(teller);
         return teller;
     }
     public int getExplosionCount() {
