@@ -306,6 +306,20 @@ public class Minesweeper extends AbstractMineSweeper {
                 }
             }
         }
+        if(x == 0){
+            if(y == getHeight()-1){
+                if (field[x][y - 1].isExplosive()) {
+                    teller++;
+                }
+                if (field[x + 1][y - 1].isExplosive()) {
+                    teller++;
+                }
+                if (field[x + 1][y].isExplosive()) {
+                    teller++;
+                }
+                return teller;
+            }
+        }
         return teller;
     }
     public int getExplosionCount() {

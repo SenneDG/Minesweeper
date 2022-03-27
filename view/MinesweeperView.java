@@ -349,6 +349,16 @@ public class MinesweeperView implements IGameStateNotifier {
                                                     }
                                                 }
                                             }
+                                            if(temp.getPositionX() == 0){
+                                                if(temp.getPositionY() == minesweeper.getHeight()-1){
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY()-1);
+                                                    notifyOpened(temp.getPositionX(), temp.getPositionY()-1, b);
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY()-1);
+                                                    notifyOpened(temp.getPositionX()+1, temp.getPositionY()-1, b);
+                                                    b = minesweeper.getAmountExplosive(temp.getPositionX()+1, temp.getPositionY());
+                                                    notifyOpened(temp.getPositionX()+1, temp.getPositionY(), b);
+                                                }
+                                            }
                                         }
                                         else{
                                             notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
