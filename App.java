@@ -14,12 +14,13 @@ public class App {
         /**
             Your code to bind your game model to the game user interface
         */
-
-
+        
+        
         model.startNewGame(Difficulty.EASY);
         int h = model.getHeight();
         int w = model.getWidth();
-        System.out.println(h + "and" + w);
+        System.out.println(h +"and" + w);
         mine.notifyNewGame(w,h);
+        mine.timer();
     }
 }

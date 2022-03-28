@@ -18,9 +18,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
-import java.time.temporal.Temporal;
 import java.util.concurrent.TimeUnit;
 
 
@@ -44,10 +41,8 @@ public class MinesweeperView implements IGameStateNotifier {
     private JPanel world = new JPanel();
     private JPanel timerPanel = new JPanel();
     private JPanel flagPanel = new JPanel();
-    private JPanel bombPanel = new JPanel();
     private JLabel timerView = new JLabel();
     private JLabel flagCountView = new JLabel();
-    private JLabel bombsLeft = new JLabel();
     private Minesweeper minesweeper;
     private int flagAmount = 0;
     private int correctAmount = 0;
@@ -57,7 +52,6 @@ public class MinesweeperView implements IGameStateNotifier {
     long displayMinutes=0;
     long secondspassed = 0;
     long starttime=System.currentTimeMillis();
-    long timepassed = 0;
 
 
     public MinesweeperView() {
@@ -65,7 +59,7 @@ public class MinesweeperView implements IGameStateNotifier {
         minesweeper.startNewGame(difficulty);
 
         this.window = new JFrame("Minesweeper");
-        timerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        timerPanel.setLayout(new FlowLayout());
         this.menuBar = new JMenuBar();
         this.gameMenu = new JMenu("New Game");
         this.menuBar.add(gameMenu);
@@ -76,8 +70,6 @@ public class MinesweeperView implements IGameStateNotifier {
             if (gameModel != null) 
                 gameModel.startNewGame(Difficulty.EASY);
                 notifyNewGame(8,8);
-                difficulty = Difficulty.EASY;
-                minesweeper.startNewGame(difficulty);
         });
         this.mediumGame = new JMenuItem("Medium");
         this.gameMenu.add(this.mediumGame);
@@ -85,8 +77,6 @@ public class MinesweeperView implements IGameStateNotifier {
             if (gameModel != null)
                 gameModel.startNewGame(Difficulty.MEDIUM);
                 notifyNewGame(16,16);
-                difficulty = Difficulty.MEDIUM;
-                minesweeper.startNewGame(difficulty);
         });
         this.hardGame = new JMenuItem("Hard");
         this.gameMenu.add(this.hardGame);
@@ -94,8 +84,6 @@ public class MinesweeperView implements IGameStateNotifier {
             if (gameModel != null)
                 gameModel.startNewGame(Difficulty.HARD);
                 notifyNewGame(24,24);
-                difficulty = Difficulty.HARD;
-                minesweeper.startNewGame(difficulty);
         });
         
         this.window.setJMenuBar(this.menuBar);
@@ -104,24 +92,18 @@ public class MinesweeperView implements IGameStateNotifier {
             JLabel clockIcon = new JLabel(new ImageIcon(ImageIO.read(new File(AssetPath.CLOCK_ICON))));
             clockIcon.setSize(new DimensionUIResource(1, 1));
             timerPanel.add(clockIcon);
+            //timerPanel.add(new JLabel("TIME ELAPSED: " + timeElapsed));
             timerPanel.add(this.timerView);
         } catch (IOException e) {
             System.out.println("Unable to locate clock resource");
         }
-        bombPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         flagPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
         try {
             JLabel clockIcon = new JLabel(new ImageIcon(ImageIO.read(new File(AssetPath.FLAG_ICON))));
             clockIcon.setSize(new DimensionUIResource(1, 1));
-            JLabel bombIcon = new JLabel(new ImageIcon(ImageIO.read(new File(AssetPath.BOMB_ICON))));
-            bombIcon.setSize(new DimensionUIResource(1, 1));
             flagPanel.add(clockIcon);
             flagPanel.add(new JLabel("FLAG: "));
             flagPanel.add(this.flagCountView);
-            bombPanel.add(bombIcon);
-            bombPanel.add(new JLabel("BOMBS LEFT: "));
-            bombPanel.add((this.bombsLeft));
         } catch (IOException e) {
             System.out.println("Unable to locate flag resource");
         }
@@ -133,15 +115,12 @@ public class MinesweeperView implements IGameStateNotifier {
         layoutConstraints.gridx = 0;
         layoutConstraints.gridy = 0;
         this.window.add(timerPanel, layoutConstraints);
-        layoutConstraints.gridx = 0;
-        layoutConstraints.gridy = 1;
-        this.window.add(bombPanel, layoutConstraints);
         layoutConstraints.gridx = 1;
         layoutConstraints.gridy = 0;
         this.window.add(flagPanel, layoutConstraints);
         layoutConstraints.fill = GridBagConstraints.BOTH;
         layoutConstraints.gridx = 0;
-        layoutConstraints.gridy = 2;
+        layoutConstraints.gridy = 1;
         layoutConstraints.gridwidth = 2;
         layoutConstraints.weightx = 1.0;
         layoutConstraints.weighty = 1.0;
@@ -177,8 +156,22 @@ public class MinesweeperView implements IGameStateNotifier {
         this.gameModel.setGameStateNotifier(this);
     }
 
-    /*
-    public void timer() {
+    public void timer() throws InterruptedException
+    {
+        boolean minutes = false;
+        while(timer)
+        {
+            TimeUnit.SECONDS.sleep(1);
+            long timepassed=System.currentTimeMillis()-starttime;
+            long secondspassed=timepassed/1000;
+            if(secondspassed==60)
+            {
+                secondspassed=0;
+                minutes = true;
+                starttime=System.currentTimeMillis();
+            }
+            if((secondspassed%60)==0)
+                displayMinutes++;
 
             if(minutes) {
                 if (secondspassed == 1) {
@@ -202,19 +195,18 @@ public class MinesweeperView implements IGameStateNotifier {
                 }
             }
         }
-
-     */
-
-
+        timer();
+    }
 
     @Override
     public void notifyNewGame(int row, int col) {
         this.flagCountView.setText("0");
-        this.bombsLeft.setText("0");
         this.window.setSize(col * TILE_SIZE, row * TILE_SIZE + 30);
         this.world.removeAll();
-        minesweeper.startNewGame(difficulty);
-        System.out.println(row + " and " + col);
+        timer = true;
+        secondspassed = 0;
+        displayMinutes = 0;
+
 
         this.tiles = new TileView[row][col];
         for (int i=0; i<row; ++i) {
@@ -223,21 +215,34 @@ public class MinesweeperView implements IGameStateNotifier {
                 temp.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent arg0) {
-                        int newBombLeft = minesweeper.getExplosiveLeft();
-                        notifyBombLeftChanged(newBombLeft);
                         if (arg0.getButton() == MouseEvent.BUTTON1){
                             if (gameModel!=null)
                                 gameModel.open(temp.getPositionX(), temp.getPositionY());
                                 System.out.println("coordinate: "+"("+ temp.getPositionX()+ "," + temp.getPositionY() + ")");
 
+                                //eerste click mag geen bom zijn
+                                if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive() && firstTileRule && !minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isFlagged()) {
+                                    minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).setNotExplosive();
+                                    int b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY());
+                                    notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
+                                    boolean broke = false;
+                                    for (int i = 0; i < row && !broke; ++i) {
+                                        for (int j = 0; j < col; ++j) {
+                                            if (!minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()) {
+                                                minesweeper.getTile(i, j).isExplosive();
+                                                broke = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                                 //als de click een bom is stopt de game -> verloren
-                                if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
+                                if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive() && !minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isFlagged()){
                                     notifyExploded(temp.getPositionX(), temp.getPositionY());
                                     notifyGameLost();
-                                    timer = false;
                                 }
                                 //als de click geen bom is komt er een getal met het aantal omliggende bommen
-                                else{
+                                else if(!minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isFlagged()){
                                         int b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY());
                                         if(b == 0) {
                                             notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
@@ -385,8 +390,6 @@ public class MinesweeperView implements IGameStateNotifier {
                                     minesweeper.flag(temp.getPositionX(), temp.getPositionY());
                                     flagAmount++;
                                     notifyFlagCountChanged(flagAmount);
-                                    newBombLeft = minesweeper.getExplosiveLeft();
-                                    notifyBombLeftChanged(newBombLeft);
 
                                     //als alle flags op de bommen liggen stopt de game -> gewonnen
                                     if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
@@ -402,8 +405,6 @@ public class MinesweeperView implements IGameStateNotifier {
                                     minesweeper.unflag(temp.getPositionX(), temp.getPositionY());
                                     flagAmount--;
                                     notifyFlagCountChanged(flagAmount);
-                                    newBombLeft = minesweeper.getExplosiveLeft();
-                                    notifyBombLeftChanged(newBombLeft);
                                 }
 
 
@@ -418,55 +419,6 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.setVisible(false);
         this.world.setVisible(true);
         this.world.repaint();
-
-        boolean minutes = false;
-
-        /*
-        if(timer) {
-            timer = false;
-            displayMinutes = 0;
-            secondspassed  = 0;
-            starttime = System.currentTimeMillis();
-            timer = true;
-            while (timer) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                long timepassed = System.currentTimeMillis() - starttime;
-                long secondspassed = timepassed / 1000;
-                if (secondspassed == 60) {
-                    secondspassed = 0;
-                    minutes = true;
-                    starttime = System.currentTimeMillis();
-                }
-                if ((secondspassed % 60) == 0)
-                    displayMinutes++;
-                if (minutes) {
-                    if (secondspassed == 1) {
-                        if (displayMinutes == 1) {
-                            timerView.setText("TIME ELAPSED: " + displayMinutes + " minute and " + secondspassed + " second");
-                        } else {
-                            timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " second");
-                        }
-                    } else {
-                        timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " seconds");
-                    }
-                } else {
-                    if (secondspassed == 1) {
-                        timerView.setText("TIME ELAPSED: " + secondspassed + " second");
-                    } else {
-                        timerView.setText("TIME ELAPSED: " + secondspassed + " seconds");
-                    }
-                }
-                if (timer == false) {
-                    break;
-                }
-            }
-
-         */
-
     }
 
     @Override
@@ -481,6 +433,7 @@ public class MinesweeperView implements IGameStateNotifier {
                 }
             }
         System.out.println("You lost");
+        timer = false;
         JOptionPane.showMessageDialog(null, "You lost!");
         //throw new UnsupportedOperationException();
     }
@@ -500,6 +453,7 @@ public class MinesweeperView implements IGameStateNotifier {
         }
         System.out.println("You won!");
         JOptionPane.showMessageDialog(null, "You won!");
+        timer = false;
         //throw new UnsupportedOperationException();
     }
 
@@ -507,9 +461,6 @@ public class MinesweeperView implements IGameStateNotifier {
         for (int i=0; i<this.tiles.length; ++i)
             for (int j=0; j<this.tiles[i].length; ++j)
                 this.tiles[i][j].removalAllMouseListeners();
-        timerView.setText("TIME ELAPSED: " + "0 seconds");
-        Duration zero = null;
-        timer = false;
     }
 
     @Override
@@ -519,7 +470,7 @@ public class MinesweeperView implements IGameStateNotifier {
 
     @Override
     public void notifyBombLeftChanged(int newBombLeft) {
-        this.bombsLeft.setText((Integer.toString(newBombLeft)));
+
     }
 
     @Override
@@ -552,6 +503,14 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public Minesweeper returnMinesweeper() {
         return minesweeper;
+    }
+
+    public void resetTimer() {
+        secondspassed = 0;
+        displayMinutes = 0;
+        timer = true;
+
+
     }
 
 }
