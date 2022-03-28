@@ -1,5 +1,6 @@
 package notifier;
 
+import model.Difficulty;
 import model.Minesweeper;
 
 import java.time.Duration;
@@ -14,5 +15,6 @@ public interface IGameStateNotifier {
     void notifyFlagged(int x, int y);
     void notifyUnflagged(int x, int y);
     void notifyExploded(int x, int y);
+
     Minesweeper returnMinesweeper();
 }

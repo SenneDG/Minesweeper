@@ -18,6 +18,9 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.Temporal;
 import java.util.concurrent.TimeUnit;
 
 
@@ -52,6 +55,7 @@ public class MinesweeperView implements IGameStateNotifier {
     long displayMinutes=0;
     long secondspassed = 0;
     long starttime=System.currentTimeMillis();
+    long timepassed = 0;
 
 
     public MinesweeperView() {
@@ -70,6 +74,7 @@ public class MinesweeperView implements IGameStateNotifier {
             if (gameModel != null) 
                 gameModel.startNewGame(Difficulty.EASY);
                 notifyNewGame(8,8);
+                difficulty = Difficulty.EASY;
         });
         this.mediumGame = new JMenuItem("Medium");
         this.gameMenu.add(this.mediumGame);
@@ -77,6 +82,7 @@ public class MinesweeperView implements IGameStateNotifier {
             if (gameModel != null)
                 gameModel.startNewGame(Difficulty.MEDIUM);
                 notifyNewGame(16,16);
+                difficulty = Difficulty.MEDIUM;
         });
         this.hardGame = new JMenuItem("Hard");
         this.gameMenu.add(this.hardGame);
@@ -84,6 +90,7 @@ public class MinesweeperView implements IGameStateNotifier {
             if (gameModel != null)
                 gameModel.startNewGame(Difficulty.HARD);
                 notifyNewGame(24,24);
+                difficulty = Difficulty.HARD;
         });
         
         this.window.setJMenuBar(this.menuBar);
@@ -156,22 +163,8 @@ public class MinesweeperView implements IGameStateNotifier {
         this.gameModel.setGameStateNotifier(this);
     }
 
-    public void timer() throws InterruptedException
-    {
-        boolean minutes = false;
-        while(timer)
-        {
-            TimeUnit.SECONDS.sleep(1);
-            long timepassed=System.currentTimeMillis()-starttime;
-            long secondspassed=timepassed/1000;
-            if(secondspassed==60)
-            {
-                secondspassed=0;
-                minutes = true;
-                starttime=System.currentTimeMillis();
-            }
-            if((secondspassed%60)==0)
-                displayMinutes++;
+    /*
+    public void timer() {
 
             if(minutes) {
                 if (secondspassed == 1) {
@@ -195,8 +188,10 @@ public class MinesweeperView implements IGameStateNotifier {
                 }
             }
         }
-        timer();
-    }
+
+     */
+
+
 
     @Override
     public void notifyNewGame(int row, int col) {
@@ -206,7 +201,8 @@ public class MinesweeperView implements IGameStateNotifier {
         timer = true;
         secondspassed = 0;
         displayMinutes = 0;
-
+        timepassed = 0;
+        minesweeper.startNewGame(difficulty);
 
         this.tiles = new TileView[row][col];
         for (int i=0; i<row; ++i) {
@@ -224,6 +220,7 @@ public class MinesweeperView implements IGameStateNotifier {
                                 if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
                                     notifyExploded(temp.getPositionX(), temp.getPositionY());
                                     notifyGameLost();
+                                    timer = false;
                                 }
                                 //als de click geen bom is komt er een getal met het aantal omliggende bommen
                                 else{
@@ -403,6 +400,55 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.setVisible(false);
         this.world.setVisible(true);
         this.world.repaint();
+
+        boolean minutes = false;
+
+        /*
+        if(timer) {
+            timer = false;
+            displayMinutes = 0;
+            secondspassed  = 0;
+            starttime = System.currentTimeMillis();
+            timer = true;
+            while (timer) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                long timepassed = System.currentTimeMillis() - starttime;
+                long secondspassed = timepassed / 1000;
+                if (secondspassed == 60) {
+                    secondspassed = 0;
+                    minutes = true;
+                    starttime = System.currentTimeMillis();
+                }
+                if ((secondspassed % 60) == 0)
+                    displayMinutes++;
+                if (minutes) {
+                    if (secondspassed == 1) {
+                        if (displayMinutes == 1) {
+                            timerView.setText("TIME ELAPSED: " + displayMinutes + " minute and " + secondspassed + " second");
+                        } else {
+                            timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " second");
+                        }
+                    } else {
+                        timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " seconds");
+                    }
+                } else {
+                    if (secondspassed == 1) {
+                        timerView.setText("TIME ELAPSED: " + secondspassed + " second");
+                    } else {
+                        timerView.setText("TIME ELAPSED: " + secondspassed + " seconds");
+                    }
+                }
+                if (timer == false) {
+                    break;
+                }
+            }
+
+         */
+
     }
 
     @Override
@@ -417,7 +463,6 @@ public class MinesweeperView implements IGameStateNotifier {
                 }
             }
         System.out.println("You lost");
-        timer = false;
         JOptionPane.showMessageDialog(null, "You lost!");
         //throw new UnsupportedOperationException();
     }
@@ -437,7 +482,6 @@ public class MinesweeperView implements IGameStateNotifier {
         }
         System.out.println("You won!");
         JOptionPane.showMessageDialog(null, "You won!");
-        timer = false;
         //throw new UnsupportedOperationException();
     }
 
@@ -445,6 +489,9 @@ public class MinesweeperView implements IGameStateNotifier {
         for (int i=0; i<this.tiles.length; ++i)
             for (int j=0; j<this.tiles[i].length; ++j)
                 this.tiles[i][j].removalAllMouseListeners();
+        timerView.setText("TIME ELAPSED: " + "0 seconds");
+        Duration zero = null;
+        timer = false;
     }
 
     @Override
@@ -482,13 +529,6 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public Minesweeper returnMinesweeper() {
         return minesweeper;
-    }
-
-    public void resetTimer() {
-        secondspassed = 0;
-        displayMinutes = 0;
-        timer = true;
-
     }
 
 }

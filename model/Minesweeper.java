@@ -10,6 +10,7 @@ public class Minesweeper extends AbstractMineSweeper {
     private AbstractTile[][] field;
     private boolean firstClick;
     private boolean firstTileRule;
+    private Difficulty difficulty;
 
     public Minesweeper() {
         firstTileRule = true;
@@ -43,6 +44,7 @@ public class Minesweeper extends AbstractMineSweeper {
             int explosionCount = 99;
             startNewGame(row, col, explosionCount);
         }
+        difficulty = level;
     }
 
     @Override
@@ -76,6 +78,11 @@ public class Minesweeper extends AbstractMineSweeper {
         } else {
             field[x][y].flag();
         }
+    }
+
+    @Override
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 
     @Override
