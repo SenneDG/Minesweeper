@@ -499,6 +499,12 @@ public class GameModelTester {
         }
 
         @Override
+        public void notifyBombLeftChanged(int newBombLeft) {
+            setInvoked();
+            assertTrue("This method shouldn't be invoked in this test", false);
+        }
+
+        @Override
         public void notifyTimeElapsedChanged(Duration newTimeLeft) {
             setInvoked();
             assertTrue("This method shouldn't be invoked in this test", false);       

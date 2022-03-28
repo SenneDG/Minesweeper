@@ -345,4 +345,19 @@ public class Minesweeper extends AbstractMineSweeper {
         }
         return teller;
     }
+
+    public int getExplosiveLeft() {
+        int teller = 0;
+        for(int x = 0; x < getHeight(); x++)
+        {
+            for(int y = 0; y<getWidth(); y++)
+            {
+                if(field[x][y].isExplosive() && field[x][y].isFlagged()==false)
+                {
+                    teller++;
+                }
+            }
+        }
+        return teller;
+    }
 }

@@ -44,8 +44,10 @@ public class MinesweeperView implements IGameStateNotifier {
     private JPanel world = new JPanel();
     private JPanel timerPanel = new JPanel();
     private JPanel flagPanel = new JPanel();
+    private JPanel bombPanel = new JPanel();
     private JLabel timerView = new JLabel();
     private JLabel flagCountView = new JLabel();
+    private JLabel bombsLeft = new JLabel();
     private Minesweeper minesweeper;
     private int flagAmount = 0;
     private int correctAmount = 0;
@@ -63,7 +65,7 @@ public class MinesweeperView implements IGameStateNotifier {
         minesweeper.startNewGame(difficulty);
 
         this.window = new JFrame("Minesweeper");
-        timerPanel.setLayout(new FlowLayout());
+        timerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.menuBar = new JMenuBar();
         this.gameMenu = new JMenu("New Game");
         this.menuBar.add(gameMenu);
@@ -102,18 +104,24 @@ public class MinesweeperView implements IGameStateNotifier {
             JLabel clockIcon = new JLabel(new ImageIcon(ImageIO.read(new File(AssetPath.CLOCK_ICON))));
             clockIcon.setSize(new DimensionUIResource(1, 1));
             timerPanel.add(clockIcon);
-            //timerPanel.add(new JLabel("TIME ELAPSED: " + timeElapsed));
             timerPanel.add(this.timerView);
         } catch (IOException e) {
             System.out.println("Unable to locate clock resource");
         }
+        bombPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         flagPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
         try {
             JLabel clockIcon = new JLabel(new ImageIcon(ImageIO.read(new File(AssetPath.FLAG_ICON))));
             clockIcon.setSize(new DimensionUIResource(1, 1));
+            JLabel bombIcon = new JLabel(new ImageIcon(ImageIO.read(new File(AssetPath.BOMB_ICON))));
+            bombIcon.setSize(new DimensionUIResource(1, 1));
             flagPanel.add(clockIcon);
             flagPanel.add(new JLabel("FLAG: "));
             flagPanel.add(this.flagCountView);
+            bombPanel.add(bombIcon);
+            bombPanel.add(new JLabel("BOMBS LEFT: "));
+            bombPanel.add((this.bombsLeft));
         } catch (IOException e) {
             System.out.println("Unable to locate flag resource");
         }
@@ -125,12 +133,15 @@ public class MinesweeperView implements IGameStateNotifier {
         layoutConstraints.gridx = 0;
         layoutConstraints.gridy = 0;
         this.window.add(timerPanel, layoutConstraints);
+        layoutConstraints.gridx = 0;
+        layoutConstraints.gridy = 1;
+        this.window.add(bombPanel, layoutConstraints);
         layoutConstraints.gridx = 1;
         layoutConstraints.gridy = 0;
         this.window.add(flagPanel, layoutConstraints);
         layoutConstraints.fill = GridBagConstraints.BOTH;
         layoutConstraints.gridx = 0;
-        layoutConstraints.gridy = 1;
+        layoutConstraints.gridy = 2;
         layoutConstraints.gridwidth = 2;
         layoutConstraints.weightx = 1.0;
         layoutConstraints.weighty = 1.0;
@@ -199,6 +210,7 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyNewGame(int row, int col) {
         this.flagCountView.setText("0");
+        this.bombsLeft.setText("0");
         this.window.setSize(col * TILE_SIZE, row * TILE_SIZE + 30);
         this.world.removeAll();
         minesweeper.startNewGame(difficulty);
@@ -211,6 +223,8 @@ public class MinesweeperView implements IGameStateNotifier {
                 temp.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent arg0) {
+                        int newBombLeft = minesweeper.getExplosiveLeft();
+                        notifyBombLeftChanged(newBombLeft);
                         if (arg0.getButton() == MouseEvent.BUTTON1){
                             if (gameModel!=null)
                                 gameModel.open(temp.getPositionX(), temp.getPositionY());
@@ -371,6 +385,8 @@ public class MinesweeperView implements IGameStateNotifier {
                                     minesweeper.flag(temp.getPositionX(), temp.getPositionY());
                                     flagAmount++;
                                     notifyFlagCountChanged(flagAmount);
+                                    newBombLeft = minesweeper.getExplosiveLeft();
+                                    notifyBombLeftChanged(newBombLeft);
 
                                     //als alle flags op de bommen liggen stopt de game -> gewonnen
                                     if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
@@ -386,6 +402,8 @@ public class MinesweeperView implements IGameStateNotifier {
                                     minesweeper.unflag(temp.getPositionX(), temp.getPositionY());
                                     flagAmount--;
                                     notifyFlagCountChanged(flagAmount);
+                                    newBombLeft = minesweeper.getExplosiveLeft();
+                                    notifyBombLeftChanged(newBombLeft);
                                 }
 
 
@@ -497,6 +515,11 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyFlagCountChanged(int newFlagCount) {
         this.flagCountView.setText(Integer.toString(newFlagCount));
+    }
+
+    @Override
+    public void notifyBombLeftChanged(int newBombLeft) {
+        this.bombsLeft.setText((Integer.toString(newBombLeft)));
     }
 
     @Override
