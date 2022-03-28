@@ -37,6 +37,11 @@ public class Tile extends AbstractTile{
         explosive = true;
     }
 
+    public void setNotExplosive()
+    {
+        explosive = false;
+    }
+
     @Override
     public boolean isExplosive() {
         return explosive;

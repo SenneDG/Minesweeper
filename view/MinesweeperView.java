@@ -75,6 +75,7 @@ public class MinesweeperView implements IGameStateNotifier {
                 gameModel.startNewGame(Difficulty.EASY);
                 notifyNewGame(8,8);
                 difficulty = Difficulty.EASY;
+                minesweeper.startNewGame(difficulty);
         });
         this.mediumGame = new JMenuItem("Medium");
         this.gameMenu.add(this.mediumGame);
@@ -83,6 +84,7 @@ public class MinesweeperView implements IGameStateNotifier {
                 gameModel.startNewGame(Difficulty.MEDIUM);
                 notifyNewGame(16,16);
                 difficulty = Difficulty.MEDIUM;
+                minesweeper.startNewGame(difficulty);
         });
         this.hardGame = new JMenuItem("Hard");
         this.gameMenu.add(this.hardGame);
@@ -91,6 +93,7 @@ public class MinesweeperView implements IGameStateNotifier {
                 gameModel.startNewGame(Difficulty.HARD);
                 notifyNewGame(24,24);
                 difficulty = Difficulty.HARD;
+                minesweeper.startNewGame(difficulty);
         });
         
         this.window.setJMenuBar(this.menuBar);
@@ -198,11 +201,8 @@ public class MinesweeperView implements IGameStateNotifier {
         this.flagCountView.setText("0");
         this.window.setSize(col * TILE_SIZE, row * TILE_SIZE + 30);
         this.world.removeAll();
-        timer = true;
-        secondspassed = 0;
-        displayMinutes = 0;
-        timepassed = 0;
         minesweeper.startNewGame(difficulty);
+        System.out.println(row + " and " + col);
 
         this.tiles = new TileView[row][col];
         for (int i=0; i<row; ++i) {

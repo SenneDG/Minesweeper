@@ -19,7 +19,7 @@ public class App {
         model.startNewGame(Difficulty.EASY);
         int h = model.getHeight();
         int w = model.getWidth();
-        System.out.println(h +"and" + w);
+        System.out.println(h + "and" + w);
         mine.notifyNewGame(w,h);
     }
 }
