@@ -54,6 +54,7 @@ public class MinesweeperView implements IGameStateNotifier {
     private boolean firstTileRule = false;
     private Difficulty difficulty = Difficulty.EASY;
     private boolean timer = true;
+    private boolean minutes = false;
     long displayMinutes=0;
     long secondspassed = 0;
     long starttime=System.currentTimeMillis();
@@ -177,35 +178,61 @@ public class MinesweeperView implements IGameStateNotifier {
         this.gameModel.setGameStateNotifier(this);
     }
 
-    /*
-    public void timer() {
 
-            if(minutes) {
-                if (secondspassed == 1) {
-                    if(displayMinutes == 1) {
+    public void timer()
+    {
+            displayMinutes = 0;
+            secondspassed = 0;
+            starttime = System.currentTimeMillis();
+            timer = true;
+            while (timer) {
+                try
+                {
+                    TimeUnit.SECONDS.sleep(1);
+                }
+                catch (InterruptedException e)
+                {
+                e.printStackTrace();
+                }
+                long timepassed = System.currentTimeMillis() - starttime;
+                secondspassed = timepassed / 1000;
+                if (secondspassed == 60)
+                {
+                    secondspassed = 0;
+                    minutes = true;
+                    starttime = System.currentTimeMillis();
+                }
+                if ((secondspassed % 60) == 0)
+                    displayMinutes++;
+                if (minutes)
+                {
+                    if (secondspassed == 1)
+                    {
+                        if (displayMinutes == 1) {
                         timerView.setText("TIME ELAPSED: " + displayMinutes + " minute and " + secondspassed + " second");
-                    }
-                    else {
+                        }
+                        else {
                         timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " second");
+                        }
+                    }
+                    else
+                    {
+                    timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " seconds");
                     }
                 }
-                else {
-                    timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " seconds");
+                else
+                {
+                    if (secondspassed == 1)
+                    {
+                        timerView.setText("TIME ELAPSED: " + secondspassed + " second");
+                    }
+                    else
+                    {
+                        timerView.setText("TIME ELAPSED: " + secondspassed + " seconds");
+                    }
                 }
             }
-            else {
-                if(secondspassed == 1) {
-                    timerView.setText("TIME ELAPSED: " + secondspassed + " second");
-                }
-                else {
-                    timerView.setText("TIME ELAPSED: " + secondspassed + " seconds");
-                }
-            }
-        }
-
-     */
-
-
+    }
 
     @Override
     public void notifyNewGame(int row, int col) {
@@ -215,6 +242,7 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.removeAll();
         minesweeper.startNewGame(difficulty);
         System.out.println(row + " and " + col);
+        timer();
 
         this.tiles = new TileView[row][col];
         for (int i=0; i<row; ++i) {
@@ -405,8 +433,6 @@ public class MinesweeperView implements IGameStateNotifier {
                                     newBombLeft = minesweeper.getExplosiveLeft();
                                     notifyBombLeftChanged(newBombLeft);
                                 }
-
-
                         } 
                     }
                 });
@@ -418,54 +444,6 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.setVisible(false);
         this.world.setVisible(true);
         this.world.repaint();
-
-        boolean minutes = false;
-
-        /*
-        if(timer) {
-            timer = false;
-            displayMinutes = 0;
-            secondspassed  = 0;
-            starttime = System.currentTimeMillis();
-            timer = true;
-            while (timer) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                long timepassed = System.currentTimeMillis() - starttime;
-                long secondspassed = timepassed / 1000;
-                if (secondspassed == 60) {
-                    secondspassed = 0;
-                    minutes = true;
-                    starttime = System.currentTimeMillis();
-                }
-                if ((secondspassed % 60) == 0)
-                    displayMinutes++;
-                if (minutes) {
-                    if (secondspassed == 1) {
-                        if (displayMinutes == 1) {
-                            timerView.setText("TIME ELAPSED: " + displayMinutes + " minute and " + secondspassed + " second");
-                        } else {
-                            timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " second");
-                        }
-                    } else {
-                        timerView.setText("TIME ELAPSED: " + displayMinutes + " minutes and " + secondspassed + " seconds");
-                    }
-                } else {
-                    if (secondspassed == 1) {
-                        timerView.setText("TIME ELAPSED: " + secondspassed + " second");
-                    } else {
-                        timerView.setText("TIME ELAPSED: " + secondspassed + " seconds");
-                    }
-                }
-                if (timer == false) {
-                    break;
-                }
-            }
-
-         */
 
     }
 
@@ -509,7 +487,7 @@ public class MinesweeperView implements IGameStateNotifier {
                 this.tiles[i][j].removalAllMouseListeners();
         timerView.setText("TIME ELAPSED: " + "0 seconds");
         Duration zero = null;
-        timer = false;
+        resetTimer();
     }
 
     @Override
@@ -552,6 +530,15 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public Minesweeper returnMinesweeper() {
         return minesweeper;
+    }
+
+    @Override
+    public void resetTimer()
+    {
+        timepassed = 0;
+        displayMinutes = 0;
+        secondspassed = 0;
+        starttime = System.currentTimeMillis();
     }
 
 }

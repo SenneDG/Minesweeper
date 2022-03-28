@@ -535,6 +535,12 @@ public class GameModelTester {
         }
 
         @Override
+        public void resetTimer() {
+            setInvoked();
+            assertTrue("This method shouldn't be invoked in this test", false);
+        }
+
+        @Override
         public Minesweeper returnMinesweeper() {
             Minesweeper ms = new Minesweeper();
             return ms;
