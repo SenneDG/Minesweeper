@@ -51,7 +51,7 @@ public class MinesweeperView implements IGameStateNotifier {
     private Minesweeper minesweeper;
     private int flagAmount = 0;
     private int correctAmount = 0;
-    private boolean firstTileRule = false;
+    private boolean firstTileRule = true;
     private Difficulty difficulty = Difficulty.EASY;
     private boolean timer = true;
     private boolean minutes = false;
@@ -242,7 +242,6 @@ public class MinesweeperView implements IGameStateNotifier {
         this.world.removeAll();
         minesweeper.startNewGame(difficulty);
         System.out.println(row + " and " + col);
-        timer();
 
         this.tiles = new TileView[row][col];
         for (int i=0; i<row; ++i) {
@@ -258,14 +257,30 @@ public class MinesweeperView implements IGameStateNotifier {
                                 gameModel.open(temp.getPositionX(), temp.getPositionY());
                                 System.out.println("coordinate: "+"("+ temp.getPositionX()+ "," + temp.getPositionY() + ")");
 
+                                //als firstilerule verplaats de bom
+                                if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive() && firstTileRule && !minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isFlagged()) {
+                                    minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).setNotExplosive();
+                                    int b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY());
+                                    notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
+                                    boolean broke = false;
+                                    for (int i = 0; i < row && !broke; ++i) {
+                                        for (int j = 0; j < col; ++j) {
+                                            if (!minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()) {
+                                                minesweeper.getTile(i, j).isExplosive();
+                                                broke = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                                 //als de click een bom is stopt de game -> verloren
-                                if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive()){
+                                else if(minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isExplosive() && !minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isFlagged()){
                                     notifyExploded(temp.getPositionX(), temp.getPositionY());
                                     notifyGameLost();
                                     timer = false;
                                 }
                                 //als de click geen bom is komt er een getal met het aantal omliggende bommen
-                                else{
+                                else if(!minesweeper.getTile(temp.getPositionX(), temp.getPositionY()).isFlagged()){
                                         int b = minesweeper.getAmountExplosive(temp.getPositionX(), temp.getPositionY());
                                         if(b == 0) {
                                             notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
@@ -402,6 +417,7 @@ public class MinesweeperView implements IGameStateNotifier {
                                         else{
                                             notifyOpened(temp.getPositionX(), temp.getPositionY(), b);
                                         }
+                                    firstTileRule = false;
                                 }
                         }
                         else if (arg0.getButton() == MouseEvent.BUTTON3) {
