@@ -39,8 +39,8 @@ public class Minesweeper extends AbstractMineSweeper {
             int explosionCount = 40;
             startNewGame(row, col, explosionCount);
         } if (level == Difficulty.HARD) {
-            int row = 16;
-            int col = 30;
+            int row = 24;
+            int col = 24;
             int explosionCount = 99;
             startNewGame(row, col, explosionCount);
         }
@@ -352,7 +352,7 @@ public class Minesweeper extends AbstractMineSweeper {
         {
             for(int y = 0; y<getWidth(); y++)
             {
-                if(field[x][y].isExplosive() && field[x][y].isFlagged()==false)
+                if(field[x][y].isExplosive() && !field[x][y].isFlagged())
                 {
                     teller++;
                 }

@@ -481,6 +481,7 @@ public class MinesweeperView implements IGameStateNotifier {
     @Override
     public void notifyGameWon() {
         this.removeAllTileEvents();
+        notifyFlagCountChanged(minesweeper.getExplosionCount());
         for (int i=0; i<this.tiles.length; ++i) {
             for (int j=0; j<this.tiles[i].length; ++j) {
                 if(!minesweeper.getTile(i,j).isExplosive()){
